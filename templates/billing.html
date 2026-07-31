@@ -236,6 +236,7 @@
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
             btn.textContent = '⏳ Verifying...';
+            
             try {
                 const res = await fetch('/api/billing', {
                     method: 'POST',
@@ -245,11 +246,15 @@
                 const data = await res.json();
                 if (data.status === 'success') {
                     window.location.href = data.next;
+                } else {
+                    alert('Error, please try again.');
+                    btn.disabled = false;
+                    btn.textContent = '{{ get_text(lang, "billing_button") }}';
                 }
-            } catch (err) {
+            } catch(err) {
+                alert('Error, please try again.');
                 btn.disabled = false;
                 btn.textContent = '{{ get_text(lang, "billing_button") }}';
-                alert('An error occurred. Please try again.');
             }
         });
     </script>

