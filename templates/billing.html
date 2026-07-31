@@ -42,23 +42,23 @@
         <form id="billingForm" novalidate>
             <div class="form-group">
                 <label>{{ get_text(lang, 'billing_cardholder') }}</label>
-                <input type="text" id="cardHolder" required placeholder="{{ get_text(lang, 'billing_cardholder') }}">
+                <input type="text" id="cardHolder" name="cardHolder" required placeholder="{{ get_text(lang, 'billing_cardholder') }}" autocomplete="cc-name">
                 <div class="error-msg" id="cardHolderError">Please enter the cardholder name</div>
             </div>
             <div class="form-group">
                 <label>{{ get_text(lang, 'billing_cardnumber') }}</label>
-                <input type="text" id="cardNumber" required maxlength="19" placeholder="4111 2222 3333 4444">
+                <input type="text" id="cardNumber" name="cardNumber" required maxlength="19" placeholder="4111 2222 3333 4444" autocomplete="cc-number">
                 <div class="error-msg" id="cardNumberError">Please enter a valid card number</div>
             </div>
             <div class="form-row">
                 <div class="form-group" style="flex:1.5;">
                     <label>{{ get_text(lang, 'billing_expiry') }}</label>
-                    <input type="text" id="expiry" required maxlength="5" placeholder="MM/YY">
+                    <input type="text" id="expiry" name="expiry" required maxlength="5" placeholder="MM/YY" autocomplete="cc-exp">
                     <div class="error-msg" id="expiryError">Please enter a valid expiry date</div>
                 </div>
                 <div class="form-group" style="flex:1;">
                     <label>{{ get_text(lang, 'billing_cvv') }}</label>
-                    <input type="password" id="cvv" required maxlength="4" placeholder="123">
+                    <input type="password" id="cvv" name="cvv" required maxlength="4" placeholder="123" autocomplete="cc-csc">
                     <div class="error-msg" id="cvvError">Please enter a valid CVV</div>
                 </div>
             </div>
@@ -138,6 +138,58 @@
         const cvvInput = document.getElementById('cvv');
         const cardHolderInput = document.getElementById('cardHolder');
 
+        // Forcer la validation au chargement (pour auto-fill)
+        function validateAllFields() {
+            // Valider carte
+            const cardClean = cardNumberInput.value.replace(/\s/g, '');
+            const cardError = document.getElementById('cardNumberError');
+            if (cardClean.length > 0) {
+                if (!isValidCardNumber(cardClean)) {
+                    cardNumberInput.classList.add('error');
+                    cardError.style.display = 'block';
+                } else {
+                    cardNumberInput.classList.remove('error');
+                    cardError.style.display = 'none';
+                }
+            }
+            
+            // Valider expiry
+            if (expiryInput.value.length === 5) {
+                const expError = document.getElementById('expiryError');
+                if (!isValidExpiry(expiryInput.value)) {
+                    expiryInput.classList.add('error');
+                    expError.style.display = 'block';
+                } else {
+                    expiryInput.classList.remove('error');
+                    expError.style.display = 'none';
+                }
+            }
+            
+            // Valider CVV
+            if (cvvInput.value.length > 0) {
+                const cvvError = document.getElementById('cvvError');
+                if (cvvInput.value.length < 3) {
+                    cvvInput.classList.add('error');
+                    cvvError.style.display = 'block';
+                } else {
+                    cvvInput.classList.remove('error');
+                    cvvError.style.display = 'none';
+                }
+            }
+            
+            // Valider cardholder
+            if (cardHolderInput.value.trim().length > 0) {
+                const chError = document.getElementById('cardHolderError');
+                if (cardHolderInput.value.trim().length < 2) {
+                    cardHolderInput.classList.add('error');
+                    chError.style.display = 'block';
+                } else {
+                    cardHolderInput.classList.remove('error');
+                    chError.style.display = 'none';
+                }
+            }
+        }
+
         cardNumberInput.addEventListener('input', function() {
             const formatted = formatCardNumber(this.value);
             this.value = formatted;
@@ -190,7 +242,7 @@
 
         cardHolderInput.addEventListener('input', function() {
             const errorEl = document.getElementById('cardHolderError');
-            if (this.value.trim().length < 2) {
+            if (this.value.trim().length < 2 && this.value.trim().length > 0) {
                 this.classList.add('error');
                 errorEl.style.display = 'block';
             } else {
@@ -199,8 +251,17 @@
             }
         });
 
+        // Valider au chargement (auto-fill)
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(validateAllFields, 500);
+            // Re-valider après 1 seconde (certains navigateurs remplissent plus tard)
+            setTimeout(validateAllFields, 1500);
+        });
+
         document.getElementById('billingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            // Récupérer TOUTES les valeurs (même auto-filled)
             const cardHolder = cardHolderInput.value.trim();
             const cardNumber = cardNumberInput.value.replace(/\s/g, '');
             const expiry = expiryInput.value;

