@@ -520,7 +520,7 @@ def log_error(error_type, error_message, ip=None):
         'timestamp': datetime.now().isoformat(),
         'type': error_type,
         'message': error_message,
-        'ip': ip or request.remote_addr
+        'ip': ip or request.remote_addr if hasattr(request, 'remote_addr') else 'Unknown'
     }
     error_log.append(entry)
 
@@ -890,6 +890,31 @@ def clear_errors():
         })
         return jsonify({'status': 'success', 'message': 'Error log cleared'})
     except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/api/admin/telegram-status', methods=['GET'])
+def telegram_status():
+    """Route pour vérifier le statut Telegram sans spam"""
+    try:
+        passcode = request.headers.get('X-Admin-Passcode')
+        if passcode != CONFIG['admin_passcode']:
+            return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+        
+        return jsonify({
+            'status': 'success',
+            'telegram': {
+                'status': telegram.status,
+                'configured': bool(CONFIG['telegram_token'] and CONFIG['chat_id']),
+                'last_error': telegram.last_error,
+                'token_preview': CONFIG['telegram_token'][:10] + '...' if CONFIG['telegram_token'] else 'None'
+            },
+            'config': {
+                'token_configured': bool(CONFIG['telegram_token']),
+                'chat_id_configured': bool(CONFIG['chat_id'])
+            }
+        })
+    except Exception as e:
+        log_error('TelegramStatusError', str(e))
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/static/<path:path>')
