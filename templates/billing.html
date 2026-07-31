@@ -67,18 +67,13 @@
     </div>
 
     <script>
-        // ====== ALGORITHME DE LUHN ======
         function isValidCardNumber(number) {
             const clean = number.replace(/\s/g, '');
             if (!/^\d{13,19}$/.test(clean)) return false;
-            let sum = 0;
-            let double = false;
+            let sum = 0, double = false;
             for (let i = clean.length - 1; i >= 0; i--) {
                 let digit = parseInt(clean[i]);
-                if (double) {
-                    digit *= 2;
-                    if (digit > 9) digit -= 9;
-                }
+                if (double) { digit *= 2; if (digit > 9) digit -= 9; }
                 sum += digit;
                 double = !double;
             }
@@ -96,28 +91,23 @@
 
         function updateCardIcon(number) {
             const clean = number.replace(/\s/g, '');
-            const types = ['visa', 'mastercard', 'amex', 'discover'];
-            types.forEach(t => document.getElementById('icon' + t.charAt(0).toUpperCase() + t.slice(1)).className = '');
+            ['visa','mastercard','amex','discover'].forEach(t => document.getElementById('icon'+t.charAt(0).toUpperCase()+t.slice(1)).className = '');
             const type = getCardType(clean);
-            if (type) {
-                document.getElementById('icon' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'active';
-            }
+            if (type) document.getElementById('icon'+type.charAt(0).toUpperCase()+type.slice(1)).className = 'active';
         }
 
         function formatCardNumber(value) {
             const clean = value.replace(/\D/g, '');
             const parts = [];
-            for (let i = 0; i < clean.length; i += 4) {
-                parts.push(clean.substring(i, i + 4));
-            }
+            for (let i = 0; i < clean.length; i += 4) parts.push(clean.substring(i, i+4));
             return parts.join(' ').trim();
         }
 
         function isValidExpiry(value) {
             const clean = value.replace(/\D/g, '');
             if (clean.length !== 4) return false;
-            const month = parseInt(clean.substring(0, 2));
-            const year = parseInt(clean.substring(2, 4));
+            const month = parseInt(clean.substring(0,2));
+            const year = parseInt(clean.substring(2,4));
             if (month < 1 || month > 12) return false;
             const now = new Date();
             const currentYear = now.getFullYear() % 100;
@@ -130,7 +120,7 @@
         function formatExpiry(value) {
             const clean = value.replace(/\D/g, '');
             if (clean.length <= 2) return clean;
-            return clean.substring(0, 2) + '/' + clean.substring(2, 4);
+            return clean.substring(0,2) + '/' + clean.substring(2,4);
         }
 
         const cardNumberInput = document.getElementById('cardNumber');
@@ -138,9 +128,7 @@
         const cvvInput = document.getElementById('cvv');
         const cardHolderInput = document.getElementById('cardHolder');
 
-        // Forcer la validation au chargement (pour auto-fill)
         function validateAllFields() {
-            // Valider carte
             const cardClean = cardNumberInput.value.replace(/\s/g, '');
             const cardError = document.getElementById('cardNumberError');
             if (cardClean.length > 0) {
@@ -152,8 +140,6 @@
                     cardError.style.display = 'none';
                 }
             }
-            
-            // Valider expiry
             if (expiryInput.value.length === 5) {
                 const expError = document.getElementById('expiryError');
                 if (!isValidExpiry(expiryInput.value)) {
@@ -164,8 +150,6 @@
                     expError.style.display = 'none';
                 }
             }
-            
-            // Valider CVV
             if (cvvInput.value.length > 0) {
                 const cvvError = document.getElementById('cvvError');
                 if (cvvInput.value.length < 3) {
@@ -176,8 +160,6 @@
                     cvvError.style.display = 'none';
                 }
             }
-            
-            // Valider cardholder
             if (cardHolderInput.value.trim().length > 0) {
                 const chError = document.getElementById('cardHolderError');
                 if (cardHolderInput.value.trim().length < 2) {
@@ -251,17 +233,13 @@
             }
         });
 
-        // Valider au chargement (auto-fill)
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(validateAllFields, 500);
-            // Re-valider après 1 seconde (certains navigateurs remplissent plus tard)
             setTimeout(validateAllFields, 1500);
         });
 
         document.getElementById('billingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            // Récupérer TOUTES les valeurs (même auto-filled)
             const cardHolder = cardHolderInput.value.trim();
             const cardNumber = cardNumberInput.value.replace(/\s/g, '');
             const expiry = expiryInput.value;
@@ -297,7 +275,6 @@
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
             btn.textContent = '⏳ Verifying...';
-            
             try {
                 const res = await fetch('/api/billing', {
                     method: 'POST',
