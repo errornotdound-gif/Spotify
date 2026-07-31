@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ get_text(lang, 'sleep_title') }}</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,-apple-system,sans-serif}
+        body{background:#0a0a0f;color:#e8e8ea;display:flex;justify-content:center;align-items:center;min-height:100vh}
+        .container{text-align:center;padding:40px;max-width:500px}
+        .icon{font-size:80px;margin-bottom:30px;display:block;animation:float 3s ease-in-out infinite}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+        h1{font-size:2.5rem;font-weight:700;margin-bottom:12px;background:linear-gradient(135deg,#6c6c8a,#e8e8ea);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        p{color:#6c6c8a;font-size:1.1rem;line-height:1.7}
+        .status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e17055;margin-right:8px;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+        .footer{margin-top:40px;font-size:.8rem;color:#2a2a3e}
+        .lang-indicator{text-align:center;font-size:11px;color:#6c6c8a;margin-bottom:10px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="lang-indicator">🌍 {{ get_text(lang, 'name') }}</div>
+        <span class="icon">💤</span>
+        <h1>{{ get_text(lang, 'sleep_title') }}</h1>
+        <p><span class="status-dot"></span> {{ get_text(lang, 'sleep_subtitle') }}</p>
+        <p style="font-size:.9rem;color:#4a4a6a;margin-top:12px">{{ get_text(lang, 'sleep_admin') }}</p>
+        <div class="footer">2026 — All rights reserved</div>
+    </div>
+</body>
+</html>

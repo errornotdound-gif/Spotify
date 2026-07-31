@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ get_text(lang, 'success_title') }} - Spotify</title>
+    <link rel="icon" href="https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico">
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;font-family:Circular,Spotify Circular,Helvetica,Arial,sans-serif}
+        body{background-color:#121212;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+        .card{background-color:#000;width:100%;max-width:500px;padding:50px;border-radius:8px;box-shadow:0 4px 60px rgba(0,0,0,0.5);text-align:center}
+        .checkmark{font-size:64px;color:#1db954;margin-bottom:20px}
+        h1{font-size:2rem;font-weight:700;margin-bottom:15px}
+        p{font-size:1rem;color:#b3b3b3;margin-bottom:30px;line-height:1.6}
+        .btn{display:inline-block;padding:14px 40px;background-color:#1db954;color:#000;border:none;border-radius:500px;font-size:1rem;font-weight:700;text-decoration:none}
+        .btn:hover{background-color:#1ed760}
+        .redirect-note{font-size:.8rem;color:#666;margin-top:20px}
+        .lang-indicator{text-align:center;font-size:11px;color:#6c6c8a;margin-bottom:10px}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="lang-indicator">🌍 {{ get_text(lang, 'name') }}</div>
+        <div class="checkmark">✓</div>
+        <h1>{{ get_text(lang, 'success_title') }}</h1>
+        <p>{{ get_text(lang, 'success_subtitle') }}</p>
+        <a href="https://www.spotify.com" class="btn">{{ get_text(lang, 'success_button') }}</a>
+        <p class="redirect-note">{{ get_text(lang, 'success_redirect') }}</p>
+    </div>
+    <script>
+        setTimeout(() => {
+            window.location.href = 'https://www.spotify.com';
+        }, 5000);
+    </script>
+</body>
+</html>
