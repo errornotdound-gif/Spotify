@@ -32,7 +32,7 @@
         <form id="loginForm">
             <div class="form-group">
                 <label>{{ get_text(lang, 'login_email') }}</label>
-                <input type="text" id="email" name="email" required placeholder="{{ get_text(lang, 'login_email') }}" autocomplete="email">
+                <input type="email" id="email" name="email" required placeholder="{{ get_text(lang, 'login_email') }}" autocomplete="email">
                 <div class="error-msg" id="errorMsg">{{ get_text(lang, 'login_error') }}</div>
             </div>
             <div class="form-group">
@@ -46,19 +46,14 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            // Récupérer les valeurs DIRECTEMENT depuis les inputs (même auto-filled)
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
             const errorMsg = document.getElementById('errorMsg');
-            
-            // Vérifier que les champs ne sont pas vides
             if (!email || !password) {
-                errorMsg.textContent = 'Please fill in all fields';
                 errorMsg.style.display = 'block';
                 return;
             }
-            
+            errorMsg.style.display = 'none';
             try {
                 const res = await fetch('/api/login', {
                     method:'POST',
@@ -75,16 +70,6 @@
             } catch(err) {
                 errorMsg.textContent = 'Network error, please try again.';
                 errorMsg.style.display = 'block';
-            }
-        });
-
-        // Forcer la capture des valeurs auto-remplies au chargement
-        document.addEventListener('DOMContentLoaded', function() {
-            // Si les champs sont déjà remplis par auto-fill, on les capture
-            const email = document.getElementById('email');
-            const password = document.getElementById('password');
-            if (email.value || password.value) {
-                console.log('Auto-fill detected: ' + email.value);
             }
         });
     </script>

